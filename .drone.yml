@@ -33,7 +33,7 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: markovbot_arm64
+name: operator_arm64
 
 platform:
   arch: arm64
@@ -88,8 +88,8 @@ trigger:
   - master
 
 depends_on:
-  - markovbot_arm64
-  - markovbot_amd64
+  - operator_amd64
+  - operator_arm64
 
 
 
