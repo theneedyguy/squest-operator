@@ -1,0 +1,154 @@
+---
+# AMD64 Build
+kind: pipeline
+type: docker
+name: operator_amd64
+
+platform:
+  arch: amd64
+  os: linux
+
+steps:
+- name: publish_backend_container
+  image: plugins/docker
+  settings:
+    debug: true
+    mtu: 1000
+    registry: harbor.0x01.host
+    dockerfile: Dockerfile
+    platform: linux/amd64
+    repo: harbor.0x01.host/library/squest-operator
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    tags:
+      - latest-linux-amd64
+    
+trigger:
+  branch:
+  - master
+
+# ARM64 Build
+---
+kind: pipeline
+type: docker
+name: markovbot_arm64
+
+platform:
+  arch: arm64
+  os: linux
+
+steps:
+- name: publish_backend_container
+  image: plugins/docker
+  settings:
+    mtu: 1000
+    debug: true
+    registry: harbor.0x01.host
+    dockerfile: Dockerfile
+    platform: linux/arm64
+    repo: harbor.0x01.host/library/squest-operator
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    tags:
+      - latest-linux-arm64
+    
+trigger:
+  branch:
+  - master
+
+---
+kind: pipeline
+type: docker
+name: push_manifest
+
+clone:
+  disable: yes
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    registry: harbor.0x01.host
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target: harbor.0x01.host/library/squest-operator:latest
+    template: harbor.0x01.host/library/squest-operator:latest-OS-ARCH
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
+trigger:
+  branch:
+  - master
+
+depends_on:
+  - markovbot_arm64
+  - markovbot_amd64
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ---
+# kind: pipeline
+# type: kubernetes
+# name: logmarkov
+
+# platform:
+#   arch: amd64
+#   os: linux
+
+# steps:
+# - name: build_go-binary
+#   image: golang:1.13.0
+#   commands: 
+#   - sh cmd/logmarkov/scripts/drone.build.sh
+#   environment:
+#     GOOS: linux
+#     GOARCH: amd64
+#     CGO_ENABLED: 0
+
+# - name: publish_backend_container
+#   image: plugins/docker:18
+#   settings:
+#     mtu: 1000
+#     dockerfile: cmd/logmarkov/docker/Dockerfile.linux.amd64
+#     repo: ckevi/logmarkov
+#     username:
+#       from_secret: docker_username
+#     password:
+#       from_secret: docker_password
+#     tags:
+#       - latest
+#       - '1.1'
+    
+# trigger:
+#   branch:
+#   - master

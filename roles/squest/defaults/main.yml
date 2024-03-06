@@ -1,0 +1,5 @@
+---
+# defaults file for Squest
+
+db_root_password: toor
+db_password: toor

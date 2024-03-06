@@ -1,0 +1,27 @@
+# permissions for end users to view squests.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: squest-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: squest-operator
+    app.kubernetes.io/part-of: squest-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: squest-viewer-role
+rules:
+- apiGroups:
+  - web.hewlettpackard.com
+  resources:
+  - squests
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - web.hewlettpackard.com
+  resources:
+  - squests/status
+  verbs:
+  - get

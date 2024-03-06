@@ -1,0 +1,14 @@
+apiVersion: web.hewlettpackard.com/v1alpha1
+kind: Squest
+metadata:
+  labels:
+    app.kubernetes.io/name: squest
+    app.kubernetes.io/instance: squest-sample
+    app.kubernetes.io/part-of: squest-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: squest-operator
+  name: squest-sample
+spec:
+  # TODO(user): Add fields here
+  db_root_password: toor
+  db_password: toor

@@ -1,0 +1,15 @@
+---
+# tasks file for Squest
+
+## Create Database secret
+- name: Create a secrets for mariadb
+  kubernetes.core.k8s:
+    definition:
+      kind: Secret
+      apiVersion: v1
+      metadata:
+        namespace: '{{ ansible_operator_meta.namespace }}'
+        name: '{{ ansible_operator_meta.name }}-mariadb-secret'
+      data:
+        root-password: "{{ db_root_password | b64encode }}"
+        password: "{{ db_password | b64encode }}"
