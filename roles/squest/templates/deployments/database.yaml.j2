@@ -1,4 +1,19 @@
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+  name: '{{ ansible_operator_meta.name }}-mariadb-pvc'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  storageClassName: '{{ db.persistence.storage_class }}'
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: '{{ db.persistence.size }}'
+
+---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -41,3 +56,32 @@ spec:
         ports:
         - containerPort: 3306
           name: db
+{% if db.persistence.enabled | bool %}
+        volumeMounts: 
+        - name: mariadb-data
+          mountPath: /var/lib/mysql
+{% endif %}
+      volumes:
+{% if db.persistence.enabled | bool %}
+      - name: mariadb-data
+        persistentVolumeClaim:
+          claimName: {{ ansible_operator_meta.name }}-mariadb-pvc
+{% else %}
+      - name: mariadb-data
+        emptyDir: {}
+{% endif %}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mariadb
+  name: '{{ ansible_operator_meta.name }}-mariadb-svc'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  ports:
+    - name: db
+      port: 3306
+  selector:
+    app: mariadb
