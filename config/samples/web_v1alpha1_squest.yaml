@@ -20,7 +20,7 @@ spec:
     persistence: 
       enabled: true
       storage_class: longhorn-main
-    node_selector:
+    node_selector: |
       kuberentes.io/arch: amd64
     root_password: toor
     password: toor
