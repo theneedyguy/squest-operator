@@ -1,3 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: squest
+---
+
 apiVersion: web.hewlettpackard.com/v1alpha1
 kind: Squest
 metadata:
@@ -8,7 +14,15 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: squest-operator
   name: squest-sample
+  namespace: squest
 spec:
-  # TODO(user): Add fields here
-  db_root_password: toor
-  db_password: toor
+  db:
+    persistence: 
+      enabled: true
+      storage_class: longhorn-main
+    node_selector:
+      kuberentes.io/arch: amd64
+    root_password: toor
+    password: toor
+    name: squest
+    user: squest

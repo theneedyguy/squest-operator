@@ -51,7 +51,7 @@ endif
 OPERATOR_SDK_VERSION ?= unknown
 
 # Image URL to use all building/pushing image targets
-IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
+IMG ?= harbor.0x01.host/library/squest-operator:latest # $(IMAGE_TAG_BASE):$(VERSION)
 
 .PHONY: all
 all: docker-build

@@ -11,5 +11,13 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
         name: '{{ ansible_operator_meta.name }}-mariadb-secret'
       data:
-        root-password: "{{ db_root_password | b64encode }}"
-        password: "{{ db_password | b64encode }}"
+        root-password: "{{ db.root_password | b64encode }}"
+        password: "{{ db.password | b64encode }}"
+
+## Create Database Deployment
+
+- name: Deploy Database
+  kubernetes.core.k8s:
+    state: present
+    template:
+      path: '/deployments/database.yaml.j2'

@@ -1,0 +1,43 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-mariadb'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec: 
+  strategy:
+    type: Recreate
+  replicas: "1"
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+{% if db.node_selector %}
+      nodeSelector:
+        {{ db.node_selector | indent(width=8) }}
+{% endif %}
+      containers:
+      - name: mariadb
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef: 
+              name: '{{ ansible_operator_meta.name }}-mariadb-secret'
+              key: root-password
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef: 
+              name: '{{ ansible_operator_meta.name }}-mariadb-secret'
+              key: password
+        - name: MYSQL_DATABASE
+          value:  "{{ db.name }}"
+        - name: MYSQL_USER
+          value: "{{ db.user }}"
+        image: "mariadb:11.0.3"
+        ports:
+        - containerPort: 3306
+            name: db
