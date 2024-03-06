@@ -20,4 +20,4 @@
   kubernetes.core.k8s:
     state: present
     template:
-      path: '/deployments/database.yaml.j2'
+      path: 'deployments/database.yaml.j2'
