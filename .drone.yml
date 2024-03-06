@@ -27,7 +27,7 @@ steps:
     
 trigger:
   branch:
-  - master
+  - main
 
 # ARM64 Build
 ---
@@ -58,7 +58,7 @@ steps:
     
 trigger:
   branch:
-  - master
+  - main
 
 ---
 kind: pipeline
@@ -85,7 +85,7 @@ steps:
 
 trigger:
   branch:
-  - master
+  - main
 
 depends_on:
   - operator_amd64
