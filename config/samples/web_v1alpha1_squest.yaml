@@ -1,8 +1,8 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: squest
----
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: squest
+# ---
 
 apiVersion: web.hewlettpackard.com/v1alpha1
 kind: Squest
@@ -38,3 +38,10 @@ spec:
     password: toor
     name: squest
     user: squest
+  squest:
+    django:
+      image: quay.io/hewlettpackardenterprise/squest:latest
+      persistence:
+        enabled: true
+        storage_class: longhorn-main
+        size: 1Gi

@@ -1,0 +1,160 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-django-cm'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+data:
+  TZ: "Europe/Paris"
+  DB_HOST: '{{ ansible_operator_meta.name }}-mariadb-svc.{{ ansible_operator_meta.namespace }}.svc'
+  DB_PORT: "3306"
+  REDIS_CACHE_HOST: '{{ ansible_operator_meta.name }}-redis-svc.{{ ansible_operator_meta.namespace }}.svc'
+  DEBUG: "true"
+  DB_USER: "{{ db.user }}"
+  DB_PASSWORD: "{{ db.password }}"
+  WAIT_HOSTS: '{{ ansible_operator_meta.name }}-mariadb-svc.{{ ansible_operator_meta.namespace }}.svc:3306,{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672'
+
+{% if squest.django.persistence.enabled | bool %}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+  name: {{ ansible_operator_meta.name }}-django-static-pvc
+  namespace: {{ ansible_operator_meta.namespace }}
+spec:
+  storageClassName: {{ squest.django.persistence.storage_class }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ squest.django.persistence.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+  name: {{ ansible_operator_meta.name }}-django-media-pvc
+  namespace: {{ ansible_operator_meta.namespace }}
+spec:
+  storageClassName: {{ squest.django.persistence.storage_class }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ squest.django.persistence.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+  name: {{ ansible_operator_meta.name }}-squest-backup-pvc
+  namespace: {{ ansible_operator_meta.namespace }}
+spec:
+  storageClassName: {{ squest.django.persistence.storage_class }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ squest.django.persistence.size }}
+{% endif %}
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: '{{ ansible_operator_meta.name }}-django-migrations-job'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  template:
+    backoffLimit: 3
+    spec:
+      securityContext:
+        fsGroup: 999
+      containers:
+      - name: django
+        envFrom:
+        - configMapRef:
+            name: '{{ ansible_operator_meta.name }}-django-cm'
+        image: '{{ squest.django.image }}'
+        command: ['/bin/bash', '-c']
+        args: 
+        - |
+          echo $UID
+          echo $USER
+          echo ""
+          echo "-----------------------------------------------------"                    
+          echo "Wait for required services to start"
+          /wait
+          echo "Applying database migration"
+          python manage.py migrate --database=${DATABASE:-default}
+          echo ""
+          echo "-----------------------------------------------------"
+          echo "Collect static files"
+          python manage.py collectstatic --noinput
+          echo ""
+          echo "-----------------------------------------------------"
+          echo "Inserting default data"
+          python manage.py insert_default_data
+{% if squest.django.persistence.enabled | bool %}
+        volumeMounts: 
+        - name: django-static
+          mountPath: /app/static
+{% endif %}
+      restartPolicy: Never
+      volumes:
+{% if squest.django.persistence.enabled | bool %}
+      - name: django-static
+        persistentVolumeClaim:
+          claimName: {{ ansible_operator_meta.name }}-django-static-pvc
+{% else %}
+      - name: django-static
+        emptyDir: {}
+{% endif %}
+
+{# 
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-redis'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec: 
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+{% if redis.node_selector %}
+      nodeSelector:
+        {{ redis.node_selector | indent(width=8) }}
+{% endif %}
+      containers:
+      - name: redis
+        command: ["/bin/sh"]
+        args: ["-c", "redis-server --maxmemory-policy allkeys-lru --requirepass {{ redis.password }}"]
+        image: "redis:6.2.13-alpine"
+        ports:
+        - containerPort: 6379
+          name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+  name: '{{ ansible_operator_meta.name }}-redis-svc'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  ports:
+    - name: redis
+      port: 6379
+  selector:
+    app: redis #}

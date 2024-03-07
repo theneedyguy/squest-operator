@@ -16,6 +16,8 @@ rules:
       - pods/log
       - persistentvolumeclaims
       - services
+      - serviceaccounts
+      - configmaps
     verbs:
       - create
       - delete
@@ -43,6 +45,19 @@ rules:
       - batch
     resources:
       - jobs
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - roles
+      - rolebindings
     verbs:
       - create
       - delete
