@@ -40,7 +40,7 @@ spec:
   squest:
     django:
       ingress:
-        enabled: false
+        enabled: true
         host: "squest.0x01.host"
         class: traefik
       image: quay.io/hewlettpackardenterprise/squest:2.5.1
