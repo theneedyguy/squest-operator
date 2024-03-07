@@ -132,3 +132,34 @@
         name: '{{ ansible_operator_meta.name }}-django-nginx-cm'
       data:
         nginx.conf: "{{ lookup('file', 'nginx.conf') }}"
+
+## Create Django Deployment
+
+- name: "[DJANGO] Create Deployment"
+  kubernetes.core.k8s:
+    state: present
+    template:
+      path: 'deployments/django-deployment.yaml.j2'
+
+## Wait for deployment to finish
+
+- name: "[DJANGO] Wait until deployment is ready"
+  kubernetes.core.k8s_info:
+    api_version: "apps/v1"
+    kind: Deployment
+    name: '{{ ansible_operator_meta.name }}-django'
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Available
+      status: "True"
+
+## Create Django Deployment
+
+- name: "[CELERY] Create Deployment"
+  kubernetes.core.k8s:
+    state: present
+    template:
+      path: 'deployments/django-celery.yaml.j2'

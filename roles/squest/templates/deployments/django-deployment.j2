@@ -1,0 +1,119 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-django'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec: 
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squest
+  template:
+    metadata:
+      labels:
+        app: squest
+    spec:
+      serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
+      hostAliases:
+      - ip: 127.0.0.1
+        hostnames:
+        - "django" # to match nginx config
+{% if squest.django.node_selector %}
+      nodeSelector:
+        {{ squest.django.node_selector | indent(width=8) }}
+{% endif %}
+      initContainers:
+      - name: "wait-for-migration"
+        image: ghcr.io/groundnuty/k8s-wait-for:v2.0
+        imagePullPolicy: Always
+        args:
+          - job
+          - '{{ ansible_operator_meta.name }}-django-migrations-job'
+      containers:
+      - name: django
+        command: ['/bin/bash', '-c']
+        args:
+          - |
+            echo "Wait for required services to start"
+            /wait
+            echo "Starting web server"
+            gunicorn --bind 0.0.0.0:8000 --pythonpath /app/squest Squest.wsgi
+        image: '{{ squest.django.image }}'
+        envFrom:
+        - configMapRef:
+            name: '{{ ansible_operator_meta.name }}-django-cm'
+        ports:
+        - containerPort: 8000
+          name: django
+      - name: nginx
+        command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
+        image: nginx:1.23.4-alpine
+        envFrom:
+        - configMapRef:
+            name: '{{ ansible_operator_meta.name }}-django-cm'
+        ports:
+        - containerPort: 8080
+          name: nginx
+        volumeMounts: 
+        - name: nginx-config
+          mountPath: /etc/nginx/squest
+{% if squest.django.persistence.enabled | bool %}
+        - name: django-static
+          mountPath: /app/static
+{% endif %}
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: {{ ansible_operator_meta.name }}-django-nginx-cm
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+{% if squest.django.persistence.enabled | bool %}
+      - name: django-static
+        persistentVolumeClaim:
+          claimName: {{ ansible_operator_meta.name }}-django-static-pvc
+{% else %}
+      - name: django-static
+        emptyDir: {}
+{% endif %}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: squest
+  name: '{{ ansible_operator_meta.name }}-django-svc'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  ports:
+    - name: nginx
+      port: 8080
+      targetPort: nginx
+  selector:
+    app: squest
+
+{% if squest.django.ingress.enabled | bool %}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ ansible_operator_meta.name }}-squest-ingress
+  namespace: {{ ansible_operator_meta.namespace }}
+spec:
+  ingressClassName: {{ squest.django.ingress.ingressClassName }}
+  rules: 
+  - host: {{ squest.django.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ ansible_operator_meta.name }}-django-svc'
+            port: 
+              number: 8080
+        path: "/"
+        pathType: Prefix
+{% endif %}

@@ -1,0 +1,88 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-celery-worker'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec: 
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-worker
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+    spec:
+      serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
+{% if squest.django.node_selector %}
+      nodeSelector:
+        {{ squest.django.node_selector | indent(width=8) }}
+{% endif %}
+      initContainers:
+      - name: "wait-for-migration"
+        image: ghcr.io/groundnuty/k8s-wait-for:v2.0
+        imagePullPolicy: Always
+        args:
+          - job
+          - '{{ ansible_operator_meta.name }}-django-migrations-job'
+      containers:
+      - name: celery-worker
+        command: ['/bin/bash', '-c']
+        args:
+        - |
+          echo "Wait for required services to start"
+          /wait
+          echo "Starting celery worker"
+          celery -A service_catalog worker -l info
+        image: '{{ squest.django.image }}'
+        envFrom:
+        - configMapRef:
+            name: '{{ ansible_operator_meta.name }}-django-cm'
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-celery-beat'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec: 
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-beat
+  template:
+    metadata:
+      labels:
+        app: celery-beat
+    spec:
+      serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
+{% if squest.django.node_selector %}
+      nodeSelector:
+        {{ squest.django.node_selector | indent(width=8) }}
+{% endif %}
+      initContainers:
+      - name: "wait-for-migration"
+        image: ghcr.io/groundnuty/k8s-wait-for:v2.0
+        imagePullPolicy: Always
+        args:
+          - job
+          - '{{ ansible_operator_meta.name }}-django-migrations-job'
+      containers:
+      - name: celery-beat
+        command: ['/bin/bash', '-c']
+        args:
+        - |
+          echo "Wait for required services to start"
+          /wait
+          echo "Starting celery beat"
+          celery -A service_catalog beat -l info
+        image: '{{ squest.django.image }}'
+        envFrom:
+        - configMapRef:
+            name: '{{ ansible_operator_meta.name }}-django-cm'
+
+

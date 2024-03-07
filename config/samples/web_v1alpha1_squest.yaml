@@ -39,6 +39,10 @@ spec:
     user: squest
   squest:
     django:
+      ingress:
+        enabled: true
+        host: squest.0x01.host
+        ingressClassName: traefik
       image: quay.io/hewlettpackardenterprise/squest:2.5.1
       node_selector: |
         kubernetes.io/arch: amd64
