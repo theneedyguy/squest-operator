@@ -8,7 +8,6 @@ data:
   TZ: "Europe/Paris"
   DB_HOST: '{{ ansible_operator_meta.name }}-mariadb-svc.{{ ansible_operator_meta.namespace }}.svc'
   DB_PORT: "3306"
-  DATABASE: "{{ db.name }}"
   REDIS_CACHE_HOST: '{{ ansible_operator_meta.name }}-redis-svc.{{ ansible_operator_meta.namespace }}.svc'
   DEBUG: "true"
   DB_USER: "{{ db.user }}"

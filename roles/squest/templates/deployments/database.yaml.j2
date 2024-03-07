@@ -51,7 +51,7 @@ spec:
               name: '{{ ansible_operator_meta.name }}-mariadb-secret'
               key: password
         - name: MYSQL_DATABASE
-          value:  "{{ db.name }}"
+          value: squest_db # This is hardcoded in squest.
         - name: MYSQL_USER
           value: "{{ db.user }}"
         image: "mariadb:11.0.3"
