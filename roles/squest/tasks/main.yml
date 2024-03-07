@@ -139,7 +139,7 @@
   kubernetes.core.k8s:
     state: present
     template:
-      path: 'deployments/django-deployment.yaml.j2'
+      path: 'deployments/django-deployment.j2'
 
 ## Wait for deployment to finish
 
