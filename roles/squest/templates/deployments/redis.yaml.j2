@@ -1,0 +1,44 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-redis'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec: 
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+{% if redis.node_selector %}
+      nodeSelector:
+        {{ redis.node_selector | indent(width=8) }}
+{% endif %}
+      containers:
+      - name: redis
+        command: ["/bin/sh"]
+        args: ["-c", "redis-server --maxmemory-policy allkeys-lru --requirepass {{ redis.password }}"]
+        image: "redis:6.2.13-alpine"
+        ports:
+        - containerPort: 6379
+          name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+  name: '{{ ansible_operator_meta.name }}-redis-svc'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  ports:
+    - name: redis
+      port: 6379
+  selector:
+    app: redis

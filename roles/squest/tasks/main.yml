@@ -21,3 +21,32 @@
     state: present
     template:
       path: 'deployments/database.yaml.j2'
+
+## Create Rabbitmq Deployment
+
+- name: Deploy Rabbitmq
+  kubernetes.core.k8s:
+    state: present
+    template:
+      path: 'deployments/rabbitmq.yaml.j2'
+
+## Create reddis secret
+
+- name: Redis password secret
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        namespace: '{{ ansible_operator_meta.namespace }}'
+        name: '{{ ansible_operator_meta.name }}-redis-secret'
+      data:
+        password: "{{ redis.password | b64encode }}"
+
+## Create Redis Deployment
+
+- name: Deploy Rabbitmq
+  kubernetes.core.k8s:
+    state: present
+    template:
+      path: 'deployments/redis.yaml.j2'

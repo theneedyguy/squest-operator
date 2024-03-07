@@ -16,6 +16,17 @@ metadata:
   name: squest-sample
   namespace: squest
 spec:
+  redis:
+    node_selector: |
+      kubernetes.io/arch: amd64
+    password: toor
+  rabbitmq:
+    persistence: 
+      enabled: true
+      storage_class: longhorn-main
+      size: 2Gi
+    node_selector: |
+      kubernetes.io/arch: amd64
   db:
     persistence: 
       enabled: true

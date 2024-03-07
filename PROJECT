@@ -2,6 +2,7 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
+# Rabbitmq: https://github.com/rabbitmq/diy-kubernetes-examples/tree/master/gke
 domain: hewlettpackard.com
 layout:
 - ansible.sdk.operatorframework.io/v1
