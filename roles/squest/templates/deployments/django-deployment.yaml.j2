@@ -111,7 +111,7 @@ spec:
       paths:
       - backend:
           service:
-            name: '{{ ansible_operator_meta.name }}-django-svc'
+            name: {{ ansible_operator_meta.name }}-django-svc
             port: 
               number: 8080
         path: "/"
