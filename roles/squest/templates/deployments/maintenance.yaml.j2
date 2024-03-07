@@ -1,0 +1,78 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-maintenance-cm'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+data:
+  nginx.conf: "{{ lookup('file', 'maintenance.nginx.conf') }}"
+  maintenance.html: "{{ lookup('file', 'maintenance.html') }}"
+binaryData:
+  squest_logo_v2_300_300.png:  "{{ lookup('file', 'squest_logo_v2_300_300.png') |b64encode }}"
+
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ ansible_operator_meta.name }}-maintenance'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec: 
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: maintenance
+  template:
+    metadata:
+      labels:
+        app: maintenance
+    spec:
+{% if squest.django.node_selector %}
+      nodeSelector:
+        {{ squest.django.node_selector | indent(width=8) }}
+{% endif %}
+      containers:
+      - name: nginx
+        image: nginx:1.23.4-alpine
+        ports:
+        - containerPort: 80
+          name: nginx
+        volumeMounts:
+        - name: nginx-config-maintenance
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: nginx.conf
+        - name: nginx-config-maintenance
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: maintenance.html
+        - name: nginx-config-maintenance
+          mountPath: /usr/share/nginx/html/squest_logo_v2_300_300.png
+          subPath: squest_logo_v2_300_300.png
+      volumes:
+      - name: nginx-config-maintenance
+        configMap:
+          name: '{{ ansible_operator_meta.name }}-maintenance-cm'
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+            - key: maintenance.html
+              path: maintenance.html
+            - key: squest_logo_v2_300_300.png
+              path: squest_logo_v2_300_300.png
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: maintenance
+  name: '{{ ansible_operator_meta.name }}-maintenance-svc'
+  namespace: '{{ ansible_operator_meta.namespace }}'
+spec:
+  ports:
+    - name: nginx
+      port: 80
+      targetPort: nginx
+  selector:
+    app: maintenance

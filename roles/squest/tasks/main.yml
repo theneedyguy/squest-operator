@@ -131,7 +131,16 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
         name: '{{ ansible_operator_meta.name }}-django-nginx-cm'
       data:
-        nginx.conf: "{{ lookup('file', 'nginx.conf') }}"
+        nginx.conf: "{{ lookup('ansible.builtin.template', 'nginx.conf.j2') }}"
+
+
+## Create Maintenance Deployment
+
+- name: "[MAINTENANCE] Create Deployment"
+  kubernetes.core.k8s:
+    state: present
+    template:
+      path: 'deployments/maintenance.yaml.j2'
 
 ## Create Django Deployment
 
@@ -156,7 +165,7 @@
       type: Available
       status: "True"
 
-## Create Django Deployment
+## Create Celery Deployment
 
 - name: "[CELERY] Create Deployment"
   kubernetes.core.k8s:

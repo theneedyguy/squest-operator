@@ -104,7 +104,7 @@ metadata:
   name: {{ ansible_operator_meta.name }}-squest-ingress
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  ingressClassName: {{ squest.django.ingress.ingressClassName }}
+  ingressClassName: {{ squest.django.ingress.class }}
   rules: 
   - host: {{ squest.django.ingress.host }}
     http:
