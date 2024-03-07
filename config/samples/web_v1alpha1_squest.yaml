@@ -40,7 +40,9 @@ spec:
     user: squest
   squest:
     django:
-      image: quay.io/hewlettpackardenterprise/squest:latest
+      image: quay.io/hewlettpackardenterprise/squest:2.5.1
+      node_selector: |
+        kubernetes.io/arch: amd64
       persistence:
         enabled: true
         storage_class: longhorn-main
