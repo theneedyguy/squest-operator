@@ -16,7 +16,7 @@ spec:
       labels:
         app: squest
     spec:
-      serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
+      {# serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa' #}
       hostAliases:
       - ip: 127.0.0.1
         hostnames:

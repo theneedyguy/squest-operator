@@ -16,7 +16,7 @@ spec:
       labels:
         app: celery-worker
     spec:
-      serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
+      {# serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa' #}
 {% if django_node_selector %}
       nodeSelector:
         {{ django_node_selector | indent(width=8) }}
@@ -62,7 +62,7 @@ spec:
       labels:
         app: celery-beat
     spec:
-      serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
+      {# serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa' #}
 {% if django_node_selector %}
       nodeSelector:
         {{ django_node_selector | indent(width=8) }}
