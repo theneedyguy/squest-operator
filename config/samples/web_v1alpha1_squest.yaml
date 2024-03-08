@@ -24,7 +24,7 @@ spec:
     kubernetes.io/arch: amd64
   maintenance_node_selector: ''
 
-  storage_class: default
+  storage_class: longhorn-main
 
   db_persistence_enabled: true
   db_persistence_storage: 2Gi
@@ -37,7 +37,7 @@ spec:
 
   django_persistence_enabled: true
   django_persistence_storage: 1Gi
-  django_ingress_enabled: false
+  django_ingress_enabled: true
   django_ingress_class: traefik
   django_ingress_hostname: squest.0x01.host
   django_image: quay.io/hewlettpackardenterprise/squest:2.5.1
