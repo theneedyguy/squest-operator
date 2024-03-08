@@ -39,7 +39,7 @@ spec:
 {% endif %}
       containers:
       - name: rabbitmq
-        resources: {{ rabbitmq.resource_requirements }}
+        resources: {{ rabbitmq.resources }}
         image: "rabbitmq:3.10.23-management"
         env:
         - name: RABBITMQ_DEFAULT_PASS

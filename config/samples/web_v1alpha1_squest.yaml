@@ -28,8 +28,8 @@ spec:
       enabled: true
       storage_class: longhorn-main
       size: 2Gi
-    node_selector: |
-      kubernetes.io/arch: amd64
+    # node_selector: |
+    #   kubernetes.io/arch: amd64
     # resource_requirements:
     #   limits:
     #     memory: 256Mi
@@ -53,8 +53,8 @@ spec:
         host: "squest.0x01.host"
         class: traefik
       image: quay.io/hewlettpackardenterprise/squest:2.5.1
-      node_selector: |
-        kubernetes.io/arch: amd64
+      # node_selector: |
+      #   kubernetes.io/arch: amd64
       persistence:
         enabled: true
         storage_class: longhorn-main
@@ -63,8 +63,7 @@ spec:
       #   limits:
       #     memory: 512Mi
   maintenance:
-    node_selector: |
-      kubernetes.io/arch: amd64
+    node_selector: ''
     # resource_requirements:
     #   limits:
     #     memory: 16Mi

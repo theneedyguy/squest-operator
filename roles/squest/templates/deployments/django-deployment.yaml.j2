@@ -34,7 +34,7 @@ spec:
           - '{{ ansible_operator_meta.name }}-django-migrations-job'
       containers:
       - name: django
-        resources: {{ squest.django.resource_requirements }}
+        resources: {{ squest.django.resources }}
         command: ['/bin/bash', '-c']
         args:
           - |

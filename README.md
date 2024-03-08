@@ -66,7 +66,7 @@ spec:
     node_selector: |
       kubernetes.io/arch: amd64
     password: toor
-    resource_requirements:
+    resources:
       limits:
         memory: 50Mi
   rabbitmq:
@@ -76,7 +76,7 @@ spec:
       size: 2Gi
     node_selector: |
       kubernetes.io/arch: amd64
-    resource_requirements:
+    resources:
       limits:
         memory: 256Mi
   db:
@@ -89,7 +89,7 @@ spec:
     root_password: toor
     password: toor
     user: squest
-    resource_requirements:
+    resources:
       limits:
         memory: 512Mi
   squest:
@@ -105,13 +105,13 @@ spec:
         enabled: true
         storage_class: longhorn
         size: 1Gi
-      resource_requirements:
+      resources:
         limits:
           memory: 512Mi
   maintenance:
     node_selector: |
       kubernetes.io/arch: amd64
-    resource_requirements:
+    resources:
       limits:
         memory: 16Mi
 ```

@@ -14,7 +14,7 @@ rabbitmq:
     storage_class: default
     size: 2Gi
   node_selector: ''
-  resource_requirements:
+  resources:
     limits:
       memory: 256Mi
 db:
@@ -26,7 +26,7 @@ db:
   root_password: toor
   password: toor
   user: squest
-  resource_requirements:
+  resources: 
     limits:
       memory: 512Mi
 
@@ -42,12 +42,12 @@ squest:
       enabled: true
       storage_class: default
       size: 1Gi
-    resource_requirements:
+    resources:
       limits:
         memory: 512Mi
 
 maintenance:
   node_selector: ''
-  resource_requirements:
+  resources:
     limits:
       memory: 16Mi

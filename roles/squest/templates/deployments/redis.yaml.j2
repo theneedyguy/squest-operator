@@ -22,7 +22,7 @@ spec:
 {% endif %}
       containers:
       - name: redis
-        resources: {{ rabbitmq.resource_requirements }}
+        resources: {{ rabbitmq.resources }}
         command: ["/bin/sh"]
         args: ["-c", "redis-server --maxmemory-policy allkeys-lru --requirepass {{ redis.password }}"]
         image: "redis:6.2.13-alpine"

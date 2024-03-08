@@ -35,7 +35,7 @@ spec:
 {% endif %}
       containers:
       - name: nginx
-        resources: {{ maintenance.resource_requirements }}
+        resources: {{ maintenance.resources }}
         image: nginx:1.23.4-alpine
         ports:
         - containerPort: 80
