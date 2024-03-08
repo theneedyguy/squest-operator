@@ -114,7 +114,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 | django_ingress_enabled       | boolean | Deploy an Ingress                                                                            | false                                          |
 | django_ingress_hostname      | string  | The hostname of your Squest web ui                                                           | squest.company                                 |
 | django_ingress_class         | string  | The ingress class to use for the ingress                                                     | traefik                                        |
-| django_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | ```yaml<br>limits:<br>  memory: 512Mi<br>```   |
+| django_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;memory: 512Mi   |
 
 ### db
 
@@ -125,7 +125,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 | db_root_password         | string  | The database root password                                                                   | toor                     |
 | db_password              | string  | The user password                                                                            | toor                     |
 | db_user                  | string  | The database user                                                                            | squest                   |
-| db_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>memory: 512Mi |
+| db_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;memory: 512Mi |
 
 ### rabbitmq
 
@@ -133,17 +133,17 @@ This section describes what each parameter of the Custom Resource spec does and 
 | ------------------------------ | ------- | -------------------------------------------------------------------------------------------- | -------------------------- |
 | rabbitmq_persistence_enabled   | boolean | Enable persistence for rabbitmq                                                              | true                       |
 | rabbitmq_persistence_storage   | string  | The volume size e.g. 2Gi                                                                     | 2Gi                        |
-| rabbitmq_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>  memory: 256Mi |
+| rabbitmq_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;  memory: 256Mi |
 
 ### redis
 
 | Parameter                   | Type   | Description                                                                                  | Default                   |
 | --------------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
 | redis_password              | string | The redis cache password                                                                     | toor                      |
-| redis_resource_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>  memory: 50Mi |
+| redis_resource_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;  memory: 50Mi |
 
 ### maintenance
 
 | Parameter                         | Type | Description                                                                                  | Default                   |
 | --------------------------------- | ---- | -------------------------------------------------------------------------------------------- | ------------------------- |
-| maintenance_resource_requirements | map  | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>  memory: 16Mi |
+| maintenance_resource_requirements | map  | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;  memory: 16Mi |
