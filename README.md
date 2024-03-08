@@ -120,11 +120,6 @@ spec:
 
 This section describes what each parameter of the Custom Resource spec does and how to configure them.
 
-
-> [!WARNING] 
-> You must configure all node_selector parameters at the moment.
-
-
 ### squest
 
 
