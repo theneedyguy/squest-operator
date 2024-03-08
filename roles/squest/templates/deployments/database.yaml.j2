@@ -39,7 +39,7 @@ spec:
 {% endif %}
       containers:
       - name: mariadb
-        resources: '{{ db.resource_requirements }}'
+        resources: {{ db.resource_requirements }}
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
