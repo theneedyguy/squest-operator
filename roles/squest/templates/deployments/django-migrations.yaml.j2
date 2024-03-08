@@ -13,6 +13,7 @@ data:
   DB_USER: "{{ db.user }}"
   DB_PASSWORD: "{{ db.password }}"
   WAIT_HOSTS: '{{ ansible_operator_meta.name }}-mariadb-svc.{{ ansible_operator_meta.namespace }}.svc:3306,{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672'
+  BROKER_URL: 'amqp://rabbitmq:**@{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672/squest'
 
 {% if squest.django.persistence.enabled | bool %}
 ---
