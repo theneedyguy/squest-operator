@@ -104,7 +104,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 
 
 > [!WARNING] 
-> You must configure all node_selector parameters right now.
+> You must configure all node_selector parameters at the moment.
 
 
 ### squest
