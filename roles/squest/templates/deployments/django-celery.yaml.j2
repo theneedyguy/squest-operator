@@ -25,6 +25,7 @@ spec:
 {% endif %}
       containers:
       - name: celery-worker
+        resources: {{ django_resource_requirements }}
         command: ['/bin/bash', '-c']
         args:
         - |
