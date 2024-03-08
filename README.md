@@ -30,7 +30,7 @@ When deploying the manifest to your Cluster it will deploy:
 
 - A Database
 - A Redis Cache
-- A RebbitMQ Server (Not clustered like the official K8s deployment)
+- A RabbitMQ Server (Not clustered like the official K8s deployment)
 - A migration job to configure your Squest instance before the initial deployment and for upgrades
 - The actual Squest deployment.
 - A maintenance deployment (As of right now, when upgrading your Squest manifest it will not switch the Ingress to the maintenance deployment during upgrade. This will be added in a later version)
@@ -122,6 +122,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 | ------------------------ | ------- | -------------------------------------------------------------------------------------------- | ------------------------ |
 | db_persistence_enabled   | boolean | Enable persistence for the database                                                          | true                     |
 | db_persistence_storage   | string  | The volume size e.g. 2Gi                                                                     | 2Gi                      |
+| db_node_selector         | string  | Multiline string to select nodes for the deployment                                          | ''                       |
 | db_root_password         | string  | The database root password                                                                   | toor                     |
 | db_password              | string  | The user password                                                                            | toor                     |
 | db_user                  | string  | The database user                                                                            | squest                   |
@@ -133,6 +134,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 | ------------------------------ | ------- | -------------------------------------------------------------------------------------------- | -------------------------- |
 | rabbitmq_persistence_enabled   | boolean | Enable persistence for rabbitmq                                                              | true                       |
 | rabbitmq_persistence_storage   | string  | The volume size e.g. 2Gi                                                                     | 2Gi                        |
+| rabbitmq_node_selector         | string  | Multiline string to select nodes for the deployment                                          | ''                         |
 | rabbitmq_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;  memory: 256Mi |
 
 ### redis
@@ -140,10 +142,12 @@ This section describes what each parameter of the Custom Resource spec does and 
 | Parameter                   | Type   | Description                                                                                  | Default                   |
 | --------------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
 | redis_password              | string | The redis cache password                                                                     | toor                      |
+| redis_node_selector         | string | Multiline string to select nodes for the deployment                                          | ''                        |
 | redis_resource_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;  memory: 50Mi |
 
 ### maintenance
 
 | Parameter                         | Type | Description                                                                                  | Default                   |
 | --------------------------------- | ---- | -------------------------------------------------------------------------------------------- | ------------------------- |
-| maintenance_resource_requirements | map  | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;  memory: 16Mi |
+| maintenance_node_selector         | string  | Multiline string to select nodes for the deployment                                       | ''                        |
+| maintenance_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br> 	&nbsp; 	&nbsp;  memory: 16Mi |
