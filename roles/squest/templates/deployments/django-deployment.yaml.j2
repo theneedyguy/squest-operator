@@ -28,13 +28,13 @@ spec:
       nodeSelector:
         {{ node_selector | indent(width=8) }}
 {% endif %}
-      initContainers:
+      {# initContainers:
       - name: "wait-for-migration"
         image: ghcr.io/groundnuty/k8s-wait-for:v2.0
         imagePullPolicy: Always
         args:
           - job
-          - '{{ ansible_operator_meta.name }}-django-migrations-job'
+          - '{{ ansible_operator_meta.name }}-django-migrations-job' #}
       containers:
       - name: django
         resources: {{ django_resource_requirements }}
