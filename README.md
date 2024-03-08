@@ -98,6 +98,11 @@ spec:
 
 This section describes what each parameter of the Custom Resource spec does and how to configure them.
 
+
+> [!WARNING] 
+> You must configure all node_selector parameters right now.
+
+
 ### squest
 
 
@@ -144,6 +149,3 @@ This section describes what each parameter of the Custom Resource spec does and 
 | node_selector | map    | Map of strings to select nodes for the deployment |
 | password      | string | The redis cache password                          |
 
-
-> [!WARNING] 
-> You must configure all node_selector parameters right now.
