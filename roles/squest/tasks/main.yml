@@ -9,6 +9,8 @@
     template:
       path: 'deployments/maintenance.yaml.j2'
 
+## Wait for maintenance deployment
+
 - name: "[MAINTENANCE] Wait until deployment is ready"
   kubernetes.core.k8s_info:
     api_version: "apps/v1"
@@ -21,6 +23,8 @@
     wait_condition:
       type: Available
       status: "True"
+
+## Set ingress to maintenance during deployment
 
 - name: "[MAINTENANCE] Create Ingress and set maintenance service temporarily"
   when: django_ingress_enabled | bool
