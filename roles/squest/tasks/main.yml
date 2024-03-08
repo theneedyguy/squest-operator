@@ -11,8 +11,8 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
         name: '{{ ansible_operator_meta.name }}-mariadb-secret'
       data:
-        root-password: "{{ db.root_password | b64encode }}"
-        password: "{{ db.password | b64encode }}"
+        root-password: "{{ db_root_password | b64encode }}"
+        password: "{{ db_password | b64encode }}"
 
 ## Create Database Deployment
 
@@ -41,7 +41,7 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
         name: '{{ ansible_operator_meta.name }}-redis-secret'
       data:
-        password: "{{ redis.password | b64encode }}"
+        password: "{{ redis_password | b64encode }}"
 
 ## Create Redis Deployment
 

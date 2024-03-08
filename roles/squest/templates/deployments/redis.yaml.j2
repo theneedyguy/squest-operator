@@ -16,15 +16,18 @@ spec:
       labels:
         app: redis
     spec:
-{% if redis.node_selector %}
+{% if redis_node_selector %}
       nodeSelector:
-        {{ redis.node_selector | indent(width=8) }}
+        {{ redis_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       containers:
       - name: redis
-        resources: {{ rabbitmq['resources'] }}
+        resources: {{ redis_resource_requirements }}
         command: ["/bin/sh"]
-        args: ["-c", "redis-server --maxmemory-policy allkeys-lru --requirepass {{ redis.password }}"]
+        args: ["-c", "redis-server --maxmemory-policy allkeys-lru --requirepass {{ redis_password }}"]
         image: "redis:6.2.13-alpine"
         ports:
         - containerPort: 6379

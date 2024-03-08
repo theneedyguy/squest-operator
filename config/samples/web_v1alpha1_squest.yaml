@@ -16,54 +16,30 @@ metadata:
   name: squest
   namespace: squest
 spec:
-  redis:
-    node_selector: |
-      kubernetes.io/arch: amd64
-    password: toor
-    # resource_requirements:
-    #   limits:
-    #     memory: 50Mi
-  rabbitmq:
-    persistence: 
-      enabled: true
-      storage_class: longhorn-main
-      size: 2Gi
-    # node_selector: |
-    #   kubernetes.io/arch: amd64
-    # resource_requirements:
-    #   limits:
-    #     memory: 256Mi
-  db:
-    persistence: 
-      enabled: true
-      storage_class: longhorn-main
-      size: 2Gi
-    node_selector: |
-      kubernetes.io/arch: amd64
-    root_password: toor
-    password: toor
-    user: squest
-    # resource_requirements:
-    #   limits:
-    #     memory: 512Mi
-  squest:
-    django:
-      ingress:
-        enabled: true
-        host: "squest.0x01.host"
-        class: traefik
-      image: quay.io/hewlettpackardenterprise/squest:2.5.1
-      # node_selector: |
-      #   kubernetes.io/arch: amd64
-      persistence:
-        enabled: true
-        storage_class: longhorn-main
-        size: 1Gi
-      # resource_requirements:
-      #   limits:
-      #     memory: 512Mi
-  maintenance:
-    node_selector: ''
-    # resource_requirements:
-    #   limits:
-    #     memory: 16Mi
+  node_selector: ''
+  redis_node_selector: ''
+  rabbitmq_node_selector: ''
+  db_node_selector: ''
+  django_node_selector: |
+    kubernetes.io/arch: amd64
+  maintenance_node_selector: ''
+
+  storage_class: default
+
+  db_persistence_enabled: true
+  db_persistence_storage: 2Gi
+  db_user: squest
+  db_password: toor
+  db_root_password: toor
+
+  rabbitmq_persistence_enabled: true
+  rabbitmq_persistence_storage: 2Gi
+
+  django_persistence_enabled: true
+  django_persistence_storage: 1Gi
+  django_ingress_enabled: false
+  django_ingress_class: traefik
+  django_ingress_hostname: squest.0x01.host
+  django_image: quay.io/hewlettpackardenterprise/squest:2.5.1
+
+  redis_password: toor

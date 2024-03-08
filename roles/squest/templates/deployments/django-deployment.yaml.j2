@@ -21,9 +21,12 @@ spec:
       - ip: 127.0.0.1
         hostnames:
         - "django" # to match nginx config
-{% if squest.django.node_selector %}
+{% if django_node_selector %}
       nodeSelector:
-        {{ squest.django.node_selector | indent(width=8) }}
+        {{ django_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       initContainers:
       - name: "wait-for-migration"
@@ -34,7 +37,7 @@ spec:
           - '{{ ansible_operator_meta.name }}-django-migrations-job'
       containers:
       - name: django
-        resources: {{ squest.django['resources'] }}
+        resources: {{ django_resource_requirements }}
         command: ['/bin/bash', '-c']
         args:
           - |
@@ -42,7 +45,7 @@ spec:
             /wait
             echo "Starting web server"
             gunicorn --bind 0.0.0.0:8000 --pythonpath /app/squest Squest.wsgi
-        image: '{{ squest.django.image }}'
+        image: '{{ django_image }}'
         envFrom:
         - configMapRef:
             name: '{{ ansible_operator_meta.name }}-django-cm'
@@ -61,7 +64,7 @@ spec:
         volumeMounts: 
         - name: nginx-config
           mountPath: /etc/nginx/squest
-{% if squest.django.persistence.enabled | bool %}
+{% if django_persistence_enabled | bool %}
         - name: django-static
           mountPath: /app/static
 {% endif %}
@@ -72,7 +75,7 @@ spec:
           items:
             - key: nginx.conf
               path: nginx.conf
-{% if squest.django.persistence.enabled | bool %}
+{% if django_persistence_enabled | bool %}
       - name: django-static
         persistentVolumeClaim:
           claimName: {{ ansible_operator_meta.name }}-django-static-pvc
@@ -97,7 +100,7 @@ spec:
   selector:
     app: squest
 
-{% if squest.django.ingress.enabled | bool %}
+{% if django_ingress_enabled | bool %}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -105,9 +108,9 @@ metadata:
   name: {{ ansible_operator_meta.name }}-squest-ingress
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  ingressClassName: {{ squest.django.ingress.class }}
+  ingressClassName: {{ django_ingress_class }}
   rules: 
-  - host: {{ squest.django.ingress.host }}
+  - host: {{ django_ingress_hostname }}
     http:
       paths:
       - backend:

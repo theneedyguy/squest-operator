@@ -62,114 +62,88 @@ metadata:
   name: squest
   namespace: squest
 spec:
-  redis:
-    node_selector: |
-      kubernetes.io/arch: amd64
-    password: toor
-    resources:
-      limits:
-        memory: 50Mi
-  rabbitmq:
-    persistence: 
-      enabled: true
-      storage_class: longhorn
-      size: 2Gi
-    node_selector: |
-      kubernetes.io/arch: amd64
-    resources:
-      limits:
-        memory: 256Mi
-  db:
-    persistence: 
-      enabled: true
-      storage_class: longhorn
-      size: 2Gi
-    node_selector: |
-      kubernetes.io/arch: amd64
-    root_password: toor
-    password: toor
-    user: squest
-    resources:
-      limits:
-        memory: 512Mi
-  squest:
-    django:
-      ingress:
-        enabled: true
-        host: "squest.company"
-        class: traefik
-      image: quay.io/hewlettpackardenterprise/squest:2.5.1
-      node_selector: |
-        kubernetes.io/arch: amd64
-      persistence:
-        enabled: true
-        storage_class: longhorn
-        size: 1Gi
-      resources:
-        limits:
-          memory: 512Mi
-  maintenance:
-    node_selector: |
-      kubernetes.io/arch: amd64
-    resources:
-      limits:
-        memory: 16Mi
+  node_selector: ''
+  redis_node_selector: ''
+  rabbitmq_node_selector: ''
+  db_node_selector: ''
+  django_node_selector: |
+    kubernetes.io/arch: amd64
+  maintenance_node_selector: ''
+
+  storage_class: default
+
+  db_persistence_enabled: true
+  db_persistence_storage: 2Gi
+  db_user: squest
+  db_password: toor
+  db_root_password: toor
+
+  rabbitmq_persistence_enabled: true
+  rabbitmq_persistence_storage: 2Gi
+
+  django_persistence_enabled: true
+  django_persistence_storage: 1Gi
+  django_ingress_enabled: false
+  django_ingress_class: traefik
+  django_ingress_hostname: squest.0x01.host
+  django_image: quay.io/hewlettpackardenterprise/squest:2.5.1
+
+  redis_password: toor
+
 ```
 
 ## Configuration
 
 This section describes what each parameter of the Custom Resource spec does and how to configure them.
 
+### global parameters
+
+| Parameter     | Type   | Description                                                 | Default |
+| ------------- | ------ | ----------------------------------------------------------- | ------- |
+| storage_class | string | Storage Class for all Persistent Volumes                    | default |
+| node_selector | string | Multiline string of nodeSelectors to apply to all resources | ''      |
+
 ### squest
 
-
-| Parameter                        | Type    | Description                                                                                  | Default                                        |
-| -------------------------------- | ------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| django.persistence.enabled       | boolean | Enable persistence for the Squest data                                                       | true                                           |
-| django.persistence.storage_class | string  | Name of the storage class for the persistent volume                                          | default                                        |
-| django.persistence.size          | string  | The volume size e.g. 2Gi                                                                     | 1Gi                                            |
-| django.node_selector             | string  | Multiline string to select nodes for the deployment                                          | ''                                             |
-| django.image                     | string  | The image to use for the squest deployment                                                   | quay.io/hewlettpackardenterprise/squest:latest |
-| django.ingress.enabled           | boolean | Deploy an Ingress                                                                            | false                                          |
-| django.ingress.host              | string  | The hostname of your Squest web ui                                                           | squest.company                                 |
-| django.ingress.class             | string  | The ingress class to use for the ingress                                                     | traefik                                        |
-| django.resources      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi                     |
+| Parameter                    | Type    | Description                                                                                  | Default                                        |
+| ---------------------------- | ------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| django_persistence_enabled   | boolean | Enable persistence for the Squest data                                                       | true                                           |
+| django_persistence_storage   | string  | The volume size e.g. 2Gi                                                                     | 1Gi                                            |
+| django_node_selector         | string  | Multiline string to select nodes for the deployment                                          | ''                                             |
+| django_image                 | string  | The image to use for the squest deployment                                                   | quay.io/hewlettpackardenterprise/squest:latest |
+| django_ingress_enabled       | boolean | Deploy an Ingress                                                                            | false                                          |
+| django_ingress_hostname      | string  | The hostname of your Squest web ui                                                           | squest.company                                 |
+| django_ingress_class         | string  | The ingress class to use for the ingress                                                     | traefik                                        |
+| django_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | ```yaml<br>limits:<br>  memory: 512Mi<br>```   |
 
 ### db
 
-| Parameter                 | Type    | Description                                                                                  | Default                  |
-| ------------------------- | ------- | -------------------------------------------------------------------------------------------- | ------------------------ |
-| persistence.enabled       | boolean | Enable persistence for the database                                                          | true                     |
-| persistence.storage_class | string  | Name of the storage class for the persistent volume                                          | default                  |
-| persistence.size          | string  | The volume size e.g. 2Gi                                                                     | 2Gi                      |
-| node_selector             | string  | Multiline string to select nodes for the deployment                                          | ''                       |
-| root_password             | string  | The database root password                                                                   | toor                     |
-| password                  | string  | The user password                                                                            | toor                     |
-| user                      | string  | The database user                                                                            | squest                   |
-| resources      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi |
+| Parameter                | Type    | Description                                                                                  | Default                  |
+| ------------------------ | ------- | -------------------------------------------------------------------------------------------- | ------------------------ |
+| db_persistence_enabled   | boolean | Enable persistence for the database                                                          | true                     |
+| db_persistence_storage   | string  | The volume size e.g. 2Gi                                                                     | 2Gi                      |
+| db_root_password         | string  | The database root password                                                                   | toor                     |
+| db_password              | string  | The user password                                                                            | toor                     |
+| db_user                  | string  | The database user                                                                            | squest                   |
+| db_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>memory: 512Mi |
 
 ### rabbitmq
 
+| Parameter                      | Type    | Description                                                                                  | Default                    |
+| ------------------------------ | ------- | -------------------------------------------------------------------------------------------- | -------------------------- |
+| rabbitmq_persistence_enabled   | boolean | Enable persistence for rabbitmq                                                              | true                       |
+| rabbitmq_persistence_storage   | string  | The volume size e.g. 2Gi                                                                     | 2Gi                        |
+| rabbitmq_resource_requirements | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>  memory: 256Mi |
 
-| Parameter                 | Type    | Description                                                                                  | Default                    |
-| ------------------------- | ------- | -------------------------------------------------------------------------------------------- | -------------------------- |
-| persistence.enabled       | boolean | Enable persistence for rabbitmq                                                              | true                       |
-| persistence.storage_class | string  | Name of the storage class for the persistent volume                                          | default                    |
-| persistence.size          | string  | The volume size e.g. 2Gi                                                                     | 2Gi                        |
-| node_selector             | string  | Multiline string to select nodes for the deployment                                          | ''                         |
-| resources      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 256Mi |
 ### redis
 
-
-| Parameter            | Type   | Description                                                                                  | Default                   |
-| -------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
-| node_selector        | string | Multiline string to select nodes for the deployment                                          | ''                        |
-| password             | string | The redis cache password                                                                     | toor                      |
-| resources | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 50Mi |
+| Parameter                   | Type   | Description                                                                                  | Default                   |
+| --------------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
+| redis_password              | string | The redis cache password                                                                     | toor                      |
+| redis_resource_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>  memory: 50Mi |
 
 ### maintenance
 
-| Parameter            | Type   | Description                                                                                  | Default                   |
-| -------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
-| node_selector        | string | Multiline string to select nodes for the deployment                                          | ''                        |
-| resources | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 16Mi |
+| Parameter                         | Type | Description                                                                                  | Default                   |
+| --------------------------------- | ---- | -------------------------------------------------------------------------------------------- | ------------------------- |
+| maintenance_resource_requirements | map  | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>  memory: 16Mi |

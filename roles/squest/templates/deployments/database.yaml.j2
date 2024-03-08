@@ -1,4 +1,4 @@
-{% if db.persistence.enabled | bool %}
+{% if db_persistence_enabled | bool %}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -7,12 +7,12 @@ metadata:
   name: {{ ansible_operator_meta.name }}-mariadb-pvc
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  storageClassName: {{ db.persistence.storage_class }}
+  storageClassName: {{ storage_class }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ db.persistence.size }}
+      storage: {{ db_persistence_storage }}
 {% endif %}
 
 ---
@@ -33,13 +33,16 @@ spec:
       labels:
         app: mariadb
     spec:
-{% if db.node_selector %}
+{% if db_node_selector %}
       nodeSelector:
-        {{ db.node_selector | indent(width=8) }}
+        {{ db_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       containers:
       - name: mariadb
-        resources: {{ db['resources'] }}
+        resources: {{ db_resource_requirements }}
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -54,18 +57,18 @@ spec:
         - name: MYSQL_DATABASE
           value: squest_db # This is hardcoded in squest.
         - name: MYSQL_USER
-          value: "{{ db.user }}"
+          value: "{{ db_user }}"
         image: "mariadb:11.0.3"
         ports:
         - containerPort: 3306
           name: db
-{% if db.persistence.enabled | bool %}
+{% if db_persistence_enabled | bool %}
         volumeMounts: 
         - name: mariadb-data
           mountPath: /var/lib/mysql
 {% endif %}
       volumes:
-{% if db.persistence.enabled | bool %}
+{% if db_persistence_enabled | bool %}
       - name: mariadb-data
         persistentVolumeClaim:
           claimName: {{ ansible_operator_meta.name }}-mariadb-pvc

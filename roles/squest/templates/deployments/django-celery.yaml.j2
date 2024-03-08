@@ -17,9 +17,12 @@ spec:
         app: celery-worker
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
-{% if squest.django.node_selector %}
+{% if django_node_selector %}
       nodeSelector:
-        {{ squest.django.node_selector | indent(width=8) }}
+        {{ django_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       initContainers:
       - name: "wait-for-migration"
@@ -37,7 +40,7 @@ spec:
           /wait
           echo "Starting celery worker"
           celery -A service_catalog worker -l info
-        image: '{{ squest.django.image }}'
+        image: '{{ django_image }}'
         envFrom:
         - configMapRef:
             name: '{{ ansible_operator_meta.name }}-django-cm'
@@ -60,9 +63,12 @@ spec:
         app: celery-beat
     spec:
       serviceAccountName: '{{ ansible_operator_meta.name }}-squest-sa'
-{% if squest.django.node_selector %}
+{% if django_node_selector %}
       nodeSelector:
-        {{ squest.django.node_selector | indent(width=8) }}
+        {{ django_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       initContainers:
       - name: "wait-for-migration"
@@ -73,7 +79,7 @@ spec:
           - '{{ ansible_operator_meta.name }}-django-migrations-job'
       containers:
       - name: celery-beat
-        resources: {{ squest.django['resources'] }}
+        resources: {{ django_resource_requirements }}
         command: ['/bin/bash', '-c']
         args:
         - |
@@ -81,7 +87,7 @@ spec:
           /wait
           echo "Starting celery beat"
           celery -A service_catalog beat -l info
-        image: '{{ squest.django.image }}'
+        image: '{{ django_image }}'
         envFrom:
         - configMapRef:
             name: '{{ ansible_operator_meta.name }}-django-cm'

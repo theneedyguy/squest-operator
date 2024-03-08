@@ -29,13 +29,16 @@ spec:
       labels:
         app: maintenance
     spec:
-{% if maintenance.node_selector %}
+{% if maintenance_node_selector %}
       nodeSelector:
-        {{ maintenance.node_selector | indent(width=8) }}
+        {{ maintenance_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       containers:
       - name: nginx
-        resources: {{ maintenance['resources'] }}
+        resources: {{ maintenance_resource_requirements }}
         image: nginx:1.23.4-alpine
         ports:
         - containerPort: 80

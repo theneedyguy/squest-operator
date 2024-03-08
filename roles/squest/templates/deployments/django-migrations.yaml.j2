@@ -10,12 +10,12 @@ data:
   DB_PORT: "3306"
   REDIS_CACHE_HOST: '{{ ansible_operator_meta.name }}-redis-svc.{{ ansible_operator_meta.namespace }}.svc'
   DEBUG: "true"
-  DB_USER: "{{ db.user }}"
-  DB_PASSWORD: "{{ db.password }}"
+  DB_USER: "{{ db_user }}"
+  DB_PASSWORD: "{{ db_password }}"
   WAIT_HOSTS: '{{ ansible_operator_meta.name }}-mariadb-svc.{{ ansible_operator_meta.namespace }}.svc:3306,{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672'
   BROKER_URL: 'amqp://rabbitmq:rabbitmq@{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672/squest'
 
-{% if squest.django.persistence.enabled | bool %}
+{% if django_persistence_enabled | bool %}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -23,12 +23,12 @@ metadata:
   name: {{ ansible_operator_meta.name }}-django-static-pvc
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  storageClassName: {{ squest.django.persistence.storage_class }}
+  storageClassName: {{ storage_class }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ squest.django.persistence.size }}
+      storage: {{ django_persistence_storage }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -36,12 +36,12 @@ metadata:
   name: {{ ansible_operator_meta.name }}-django-media-pvc
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  storageClassName: {{ squest.django.persistence.storage_class }}
+  storageClassName: {{ storage_class }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ squest.django.persistence.size }}
+      storage: {{ django_persistence_storage }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -49,12 +49,12 @@ metadata:
   name: {{ ansible_operator_meta.name }}-squest-backup-pvc
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  storageClassName: {{ squest.django.persistence.storage_class }}
+  storageClassName: {{ storage_class }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ squest.django.persistence.size }}
+      storage: {{ django_persistence_storage }}
 {% endif %}
 
 ---
@@ -69,9 +69,12 @@ spec:
   template:
     backoffLimit: 3
     spec:
-{% if squest.django.node_selector %}
+{% if django_node_selector %}
       nodeSelector:
-        {{ squest.django.node_selector | indent(width=8) }}
+        {{ django_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       securityContext:
         fsGroup: 999
@@ -80,7 +83,7 @@ spec:
         envFrom:
         - configMapRef:
             name: '{{ ansible_operator_meta.name }}-django-cm'
-        image: '{{ squest.django.image }}'
+        image: '{{ django_image }}'
         command: ['/bin/bash', '-c']
         args: 
         - |
@@ -100,14 +103,14 @@ spec:
           echo "-----------------------------------------------------"
           echo "Inserting default data"
           python manage.py insert_default_data
-{% if squest.django.persistence.enabled | bool %}
+{% if django_persistence_enabled | bool %}
         volumeMounts: 
         - name: django-static
           mountPath: /app/static
 {% endif %}
       restartPolicy: Never
       volumes:
-{% if squest.django.persistence.enabled | bool %}
+{% if django_persistence_enabled | bool %}
       - name: django-static
         persistentVolumeClaim:
           claimName: {{ ansible_operator_meta.name }}-django-static-pvc

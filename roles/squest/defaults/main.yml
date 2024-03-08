@@ -1,53 +1,49 @@
 ---
 # defaults file for Squest
 
-redis:
-  node_selector: ''
-  password: toor
-  resource_requirements:
-    limits:
-      memory: 50Mi
+redis_resource_requirements:
+  limits:
+    memory: 50Mi
 
-rabbitmq:
-  persistence: 
-    enabled: true
-    storage_class: default
-    size: 2Gi
-  node_selector: ''
-  resources:
-    limits:
-      memory: 256Mi
-db:
-  persistence: 
-    enabled: true
-    storage_class: default
-    size: 2Gi
-  node_selector: ''
-  root_password: toor
-  password: toor
-  user: squest
-  resources: 
-    limits:
-      memory: 512Mi
+rabbitmq_resource_requirements:
+  limits:
+    memory: 256Mi
 
-squest:
-  django:
-    ingress:
-      enabled: false
-      host: "squest.company"
-      class: traefik
-    image: quay.io/hewlettpackardenterprise/squest:latest
-    node_selector: ''
-    persistence:
-      enabled: true
-      storage_class: default
-      size: 1Gi
-    resources:
-      limits:
-        memory: 512Mi
+db_resource_requirements:
+  limits:
+    memory: 512Mi
 
-maintenance:
-  node_selector: ''
-  resources:
-    limits:
-      memory: 16Mi
+django_resource_requirements:
+  limits:
+    memory: 512Mi
+
+maintenance_resource_requirements:
+  limits:
+    memory: 16Mi
+
+node_selector: ''
+redis_node_selector: ''
+rabbitmq_node_selector: ''
+db_node_selector: ''
+django_node_selector: ''
+maintenance_node_selector: ''
+
+storage_class: default
+
+db_persistence_enabled: true
+db_persistence_storage: 2Gi
+db_user: squest
+db_password: toor
+db_root_password: toor
+
+rabbitmq_persistence_enabled: true
+rabbitmq_persistence_storage: 2Gi
+
+django_persistence_enabled: true
+django_persistence_storage: 1Gi
+django_ingress_enabled: false
+django_ingress_class: traefik
+django_ingress_hostname: squest.company
+django_image: quay.io/hewlettpackardenterprise/squest:latest
+
+redis_password: toor

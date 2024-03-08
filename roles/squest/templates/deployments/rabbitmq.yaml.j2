@@ -1,4 +1,4 @@
-{% if rabbitmq.persistence.enabled | bool %}
+{% if rabbitmq_persistence_enabled | bool %}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -7,12 +7,12 @@ metadata:
   name: {{ ansible_operator_meta.name }}-rabbitmq-pvc
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  storageClassName: {{ rabbitmq.persistence.storage_class }}
+  storageClassName: {{ storage_class }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ rabbitmq.persistence.size }}
+      storage: {{ rabbitmq_persistence_storage }}
 {% endif %}
 
 ---
@@ -33,13 +33,16 @@ spec:
       labels:
         app: rabbitmq
     spec:
-{% if rabbitmq.node_selector %}
+{% if rabbitmq_node_selector %}
       nodeSelector:
-        {{ rabbitmq.node_selector | indent(width=8) }}
+        {{ rabbitmq_node_selector | indent(width=8) }}
+{% elif node_selector %}
+      nodeSelector:
+        {{ node_selector | indent(width=8) }}
 {% endif %}
       containers:
       - name: rabbitmq
-        resources: {{ rabbitmq['resources'] }}
+        resources: {{ rabbitmq_resource_requirements }}
         image: "rabbitmq:3.10.23-management"
         env:
         - name: RABBITMQ_DEFAULT_PASS
@@ -53,13 +56,13 @@ spec:
           name: amqp
         - containerPort: 5671
           name: amqp-tls
-{% if db.persistence.enabled | bool %}
+{% if rabbitmq_persistence_enabled | bool %}
         volumeMounts: 
         - name: rabbitmq-data
           mountPath: /var/lib/rabbitmq
 {% endif %}
       volumes:
-{% if db.persistence.enabled | bool %}
+{% if rabbitmq_persistence_enabled | bool %}
       - name: rabbitmq-data
         persistentVolumeClaim:
           claimName: {{ ansible_operator_meta.name }}-rabbitmq-pvc
