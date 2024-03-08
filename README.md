@@ -66,6 +66,9 @@ spec:
     node_selector: |
       kubernetes.io/arch: amd64
     password: toor
+    resource_requirements:
+      limits:
+        memory: 50Mi
   rabbitmq:
     persistence: 
       enabled: true
@@ -73,6 +76,9 @@ spec:
       size: 2Gi
     node_selector: |
       kubernetes.io/arch: amd64
+    resource_requirements:
+      limits:
+        memory: 256Mi
   db:
     persistence: 
       enabled: true
@@ -83,6 +89,9 @@ spec:
     root_password: toor
     password: toor
     user: squest
+    resource_requirements:
+      limits:
+        memory: 512Mi
   squest:
     django:
       ingress:
@@ -96,6 +105,15 @@ spec:
         enabled: true
         storage_class: longhorn
         size: 1Gi
+      resource_requirements:
+        limits:
+          memory: 512Mi
+  maintenance:
+    node_selector: |
+      kubernetes.io/arch: amd64
+    resource_requirements:
+      limits:
+        memory: 16Mi
 ```
 
 ## Configuration
@@ -110,46 +128,53 @@ This section describes what each parameter of the Custom Resource spec does and 
 ### squest
 
 
-| Parameter                        | Type    | Description                                         |
-| -------------------------------- | ------- | --------------------------------------------------- |
-| django.persistence.enabled       | boolean | Enable persistence for the Squest data              |
-| django.persistence.storage_class | string  | Name of the storage class for the persistent volume |
-| django.persistence.size          | string  | The volume size e.g. 2Gi                            |
-| django.node_selector             | map     | Map of strings to select nodes for the deployment   |
-| django.image                     | string  | The image to use for the squest deployment          |
-| django.ingress.enabled           | boolean | Deploy an Ingress                                   |
-| django.ingress.host              | string  | The hostname of your Squest web ui                  |
-| django.ingress.class             | string  | The ingress class to use for the ingress            |
-
+| Parameter                        | Type    | Description                                                                                  | Default                                        |
+| -------------------------------- | ------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| django.persistence.enabled       | boolean | Enable persistence for the Squest data                                                       | true                                           |
+| django.persistence.storage_class | string  | Name of the storage class for the persistent volume                                          | default                                        |
+| django.persistence.size          | string  | The volume size e.g. 2Gi                                                                     | 1Gi                                            |
+| django.node_selector             | string  | Multiline string to select nodes for the deployment                                          | ''                                             |
+| django.image                     | string  | The image to use for the squest deployment                                                   | quay.io/hewlettpackardenterprise/squest:latest |
+| django.ingress.enabled           | boolean | Deploy an Ingress                                                                            | false                                          |
+| django.ingress.host              | string  | The hostname of your Squest web ui                                                           | squest.company                                 |
+| django.ingress.class             | string  | The ingress class to use for the ingress                                                     | traefik                                        |
+| django.resouce_requirements      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi                     |
 
 ### db
 
-| Parameter                 | Type    | Description                                         |
-| ------------------------- | ------- | --------------------------------------------------- |
-| persistence.enabled       | boolean | Enable persistence for the database                 |
-| persistence.storage_class | string  | Name of the storage class for the persistent volume |
-| persistence.size          | string  | The volume size e.g. 2Gi                            |
-| node_selector             | map     | Map of strings to select nodes for the deployment   |
-| root_password             | string  | The database root password                          |
-| password                  | string  | The user password                                   |
-| user                      | string  | The database user                                   |
-
+| Parameter                 | Type    | Description                                                                                  | Default                  |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------- | ------------------------ |
+| persistence.enabled       | boolean | Enable persistence for the database                                                          | true                     |
+| persistence.storage_class | string  | Name of the storage class for the persistent volume                                          | default                  |
+| persistence.size          | string  | The volume size e.g. 2Gi                                                                     | 2Gi                      |
+| node_selector             | string  | Multiline string to select nodes for the deployment                                          | ''                       |
+| root_password             | string  | The database root password                                                                   | toor                     |
+| password                  | string  | The user password                                                                            | toor                     |
+| user                      | string  | The database user                                                                            | squest                   |
+| resouce_requirements      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi |
 
 ### rabbitmq
 
 
-| Parameter                 | Type    | Description                                         |
-| ------------------------- | ------- | --------------------------------------------------- |
-| persistence.enabled       | boolean | Enable persistence for rabbitmq                 |
-| persistence.storage_class | string  | Name of the storage class for the persistent volume |
-| persistence.size          | string  | The volume size e.g. 2Gi                            |
-| node_selector             | map     | Map of strings to select nodes for the deployment   |
-
+| Parameter                 | Type    | Description                                                                                  | Default                    |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------- | -------------------------- |
+| persistence.enabled       | boolean | Enable persistence for rabbitmq                                                              | true                       |
+| persistence.storage_class | string  | Name of the storage class for the persistent volume                                          | default                    |
+| persistence.size          | string  | The volume size e.g. 2Gi                                                                     | 2Gi                        |
+| node_selector             | string  | Multiline string to select nodes for the deployment                                          | ''                         |
+| resouce_requirements      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 256Mi |
 ### redis
 
 
-| Parameter     | Type   | Description                                       |
-| ------------- | ------ | ------------------------------------------------- |
-| node_selector | map    | Map of strings to select nodes for the deployment |
-| password      | string | The redis cache password                          |
+| Parameter            | Type   | Description                                                                                  | Default                   |
+| -------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
+| node_selector        | string | Multiline string to select nodes for the deployment                                          | ''                        |
+| password             | string | The redis cache password                                                                     | toor                      |
+| resouce_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 50Mi |
 
+### maintenance
+
+| Parameter            | Type   | Description                                                                                  | Default                   |
+| -------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
+| node_selector        | string | Multiline string to select nodes for the deployment                                          | ''                        |
+| resouce_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 16Mi |
