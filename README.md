@@ -133,7 +133,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 | django.ingress.enabled           | boolean | Deploy an Ingress                                                                            | false                                          |
 | django.ingress.host              | string  | The hostname of your Squest web ui                                                           | squest.company                                 |
 | django.ingress.class             | string  | The ingress class to use for the ingress                                                     | traefik                                        |
-| django.resouce_requirements      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi                     |
+| django.resources      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi                     |
 
 ### db
 
@@ -146,7 +146,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 | root_password             | string  | The database root password                                                                   | toor                     |
 | password                  | string  | The user password                                                                            | toor                     |
 | user                      | string  | The database user                                                                            | squest                   |
-| resouce_requirements      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi |
+| resources      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 512Mi |
 
 ### rabbitmq
 
@@ -157,7 +157,7 @@ This section describes what each parameter of the Custom Resource spec does and 
 | persistence.storage_class | string  | Name of the storage class for the persistent volume                                          | default                    |
 | persistence.size          | string  | The volume size e.g. 2Gi                                                                     | 2Gi                        |
 | node_selector             | string  | Multiline string to select nodes for the deployment                                          | ''                         |
-| resouce_requirements      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 256Mi |
+| resources      | map     | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 256Mi |
 ### redis
 
 
@@ -165,11 +165,11 @@ This section describes what each parameter of the Custom Resource spec does and 
 | -------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
 | node_selector        | string | Multiline string to select nodes for the deployment                                          | ''                        |
 | password             | string | The redis cache password                                                                     | toor                      |
-| resouce_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 50Mi |
+| resources | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 50Mi |
 
 ### maintenance
 
 | Parameter            | Type   | Description                                                                                  | Default                   |
 | -------------------- | ------ | -------------------------------------------------------------------------------------------- | ------------------------- |
 | node_selector        | string | Multiline string to select nodes for the deployment                                          | ''                        |
-| resouce_requirements | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 16Mi |
+| resources | map    | Define the resource limits and requests according to the official Kubernetes deployment spec | limits:<br>&nbsp;&nbsp;memory: 16Mi |
