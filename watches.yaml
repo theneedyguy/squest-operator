@@ -4,5 +4,11 @@
   group: web.hewlettpackard.com
   kind: Squest
   role: squest
-  watchDependentResources: False
+  #watchDependentResources: False
+  # Ignore jobs from watcher
+  blacklist:
+    - group: "batch"
+      version: v1
+      kind: Job
+
 #+kubebuilder:scaffold:watch
