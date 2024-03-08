@@ -45,6 +45,19 @@
     template:
       path: 'deployments/rabbitmq.yaml.j2'
 
+- name: "[RABBITMQ] Wait until deployment is ready"
+  kubernetes.core.k8s_info:
+    api_version: "apps/v1"
+    kind: Deployment
+    name: '{{ ansible_operator_meta.name }}-rabbitmq'
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Available
+      status: "True"
+
 ## Create reddis secret
 
 - name: "[REDIS] Redis password secret"
