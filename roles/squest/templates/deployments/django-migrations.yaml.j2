@@ -69,7 +69,7 @@ spec:
   template:
     backoffLimit: 3
     spec:
-{% if db.node_selector %}
+{% if squest.django.node_selector %}
       nodeSelector:
         {{ squest.django.node_selector | indent(width=8) }}
 {% endif %}
