@@ -29,12 +29,13 @@ spec:
       labels:
         app: maintenance
     spec:
-{% if squest.django.node_selector %}
+{% if maintenance.node_selector %}
       nodeSelector:
-        {{ squest.django.node_selector | indent(width=8) }}
+        {{ maintenance.node_selector | indent(width=8) }}
 {% endif %}
       containers:
       - name: nginx
+        resources: '{{ maintenance.resource_requirements }}'
         image: nginx:1.23.4-alpine
         ports:
         - containerPort: 80

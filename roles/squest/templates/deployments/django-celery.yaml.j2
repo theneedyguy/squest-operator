@@ -73,6 +73,7 @@ spec:
           - '{{ ansible_operator_meta.name }}-django-migrations-job'
       containers:
       - name: celery-beat
+        resources: '{{ squest.django.resource_requirements }}'
         command: ['/bin/bash', '-c']
         args:
         - |

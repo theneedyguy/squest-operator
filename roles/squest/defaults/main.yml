@@ -1,5 +1,53 @@
 ---
 # defaults file for Squest
 
-db_root_password: toor
-db_password: toor
+redis:
+  node_selector: ''
+  password: toor
+  resource_requirements:
+    limits:
+      memory: 50Mi
+
+rabbitmq:
+  persistence: 
+    enabled: true
+    storage_class: default
+    size: 2Gi
+  node_selector: ''
+  resource_requirements:
+    limits:
+      memory: 256Mi
+db:
+  persistence: 
+    enabled: true
+    storage_class: default
+    size: 2Gi
+  node_selector: ''
+  root_password: toor
+  password: toor
+  user: squest
+  resource_requirements:
+    limits:
+      memory: 512Mi
+
+squest:
+  django:
+    ingress:
+      enabled: false
+      host: "squest.company"
+      class: traefik
+    image: quay.io/hewlettpackardenterprise/squest:latest
+    node_selector: ''
+    persistence:
+      enabled: true
+      storage_class: default
+      size: 1Gi
+    resource_requirements:
+      limits:
+        memory: 512Mi
+
+maintenance:
+  node_selector: ''
+  resource_requirements:
+    limits:
+      memory: 16Mi
