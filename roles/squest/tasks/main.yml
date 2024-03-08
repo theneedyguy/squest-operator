@@ -122,7 +122,7 @@
 
 ## Create Redis Deployment
 
-- name: "[RABBITMQ] Deploy Rabbitmq"
+- name: "[REDIS] Deploy Rabbitmq"
   kubernetes.core.k8s:
     state: present
     template:
