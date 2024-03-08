@@ -9,11 +9,11 @@ kind: Squest
 metadata:
   labels:
     app.kubernetes.io/name: squest
-    app.kubernetes.io/instance: squest-sample
+    app.kubernetes.io/instance: squest
     app.kubernetes.io/part-of: squest-operator
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: squest-operator
-  name: squest-sample
+  name: squest
   namespace: squest
 spec:
   redis:
