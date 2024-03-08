@@ -96,6 +96,23 @@
        apiGroup: rbac.authorization.k8s.io
        kind: Role
        name: '{{ ansible_operator_meta.name }}-job-reader-role'
+ 
+## Check if a previous job exists
+
+- name:  "[DJANGO] Look for old job"
+  set_fact:
+    existingmigrationjob: "{{ query('kubernetes.core.k8s', kind='Job', namespace=ansible_operator_meta.namespace, label_selector='migrationjob=y', api_version='batch/v1') }}"
+
+## Remove old job if there is one found
+
+- name: "[DJANGO] Remove old migration job"
+  when: existingmigrationjob | length>0
+  kubernetes.core.k8s:
+    state: absent
+    api_version: batch/v1
+    kind: Job
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ ansible_operator_meta.name }}-django-migrations-job'
 
 ## Create Django Configmap, ServiceAccount, Role, RoleBinding, PVC and Migration Job
 
