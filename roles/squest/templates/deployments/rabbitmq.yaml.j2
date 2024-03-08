@@ -45,6 +45,8 @@ spec:
           value: rabbitmq
         - name: RABBITMQ_DEFAULT_USER
           value: rabbitmq
+        - name: RABBITMQ_DEFAULT_VHOST
+          value: squest
         ports:
         - containerPort: 5672
           name: amqp
