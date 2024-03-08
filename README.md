@@ -18,7 +18,8 @@ HP offers an Ansible Playbook to help users deploy HP's Squest on their K8s Clus
 2. Run `make deploy` to install all required resources and the operator into your cluster. This requires you to have an existing K8s context on your system.
 3. Create new namespace for your Squest deployment to live in: `kubectl create ns squest` 
 
-> [!NOTE] You can also choose a different name for the namespace. Just make sure to also configure the Custom Resource's namespace accordingly
+> [!NOTE] 
+> You can also choose a different name for the namespace. Just make sure to also configure the Custom Resource's namespace accordingly
 
 4. Create a manifest with the [Custom Resource](#custom-resource) so that it fits your needs. The parameters are described [here](#configuration). The operator will be installed in the namespace `squest-operator-system`
 5. Apply your manifest `kubectl apply -f <path-to-your-manifest.yaml>`
@@ -144,4 +145,5 @@ This section describes what each parameter of the Custom Resource spec does and 
 | password      | string | The redis cache password                          |
 
 
->[!WARNING] You must configure all node_selector parameters right now.
+> [!WARNING] 
+> You must configure all node_selector parameters right now.
