@@ -37,6 +37,10 @@ When deploying the manifest to your Cluster it will deploy:
 - The celery beat and celery worker deployments
 - Persistent Volume Claims, if desired
 
+### Upgrade 
+
+To upgrade to a newer version of Squest, simply change the image value in the [Custom Resource](#custom-resource) under `squest.django.image` to a new version and apply the manifest. The operator will automatically create a new migration job and redeploy Squest with the new version.
+
 ### Uninstall
 
 To remove the operator and the Squest resource and all the created dependencies run `make undeploy`.
