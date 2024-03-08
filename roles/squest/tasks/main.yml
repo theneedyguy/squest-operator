@@ -1,6 +1,51 @@
 ---
 # tasks file for Squest
 
+## Create Maintenance Deployment
+
+- name: "[MAINTENANCE] Create Deployment"
+  kubernetes.core.k8s:
+    state: present
+    template:
+      path: 'deployments/maintenance.yaml.j2'
+
+- name: "[MAINTENANCE] Wait until deployment is ready"
+  kubernetes.core.k8s_info:
+    api_version: "apps/v1"
+    kind: Deployment
+    name: '{{ ansible_operator_meta.name }}-maintenance'
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Available
+      status: "True"
+
+- name: "[MAINTENANCE] Create Ingress and set maintenance service temporarily"
+  when: django_ingress_enabled | bool
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        namespace: '{{ ansible_operator_meta.namespace }}'
+        name: '{{ ansible_operator_meta.name }}-squest-ingress'
+      spec:
+        ingressClassName: '{{ django_ingress_class }}'
+        rules: 
+        - host: '{{ django_ingress_hostname }}'
+          http:
+            paths:
+            - backend:
+                service:
+                  name: '{{ ansible_operator_meta.name }}-maintenance-svc'
+                  port: 
+                    number: 80
+              path: "/"
+              pathType: Prefix
+
+
 ## Create Database secret
 - name: "[DATABASE] Create a secrets for mariadb"
   kubernetes.core.k8s:
@@ -79,52 +124,6 @@
     template:
       path: 'deployments/redis.yaml.j2'
 
-
-# ## Create Service Account for Squest
-
-# - name: "[DJANGO] Create Service Account for Squest"
-#   kubernetes.core.k8s:
-#     definition:
-#       apiVersion: v1
-#       kind: ServiceAccount
-#       metadata:
-#         namespace: '{{ ansible_operator_meta.namespace }}'
-#         name: '{{ ansible_operator_meta.name }}-squest-sa'
-#       automountServiceAccountToken: true
-
-# ## Create Role to read Batch Jobs
-
-# - name: "[DJANGO] Create Job Reader Role"
-#   kubernetes.core.k8s:
-#     definition:
-#       apiVersion: rbac.authorization.k8s.io/v1
-#       kind: Role
-#       metadata:
-#         namespace: '{{ ansible_operator_meta.namespace }}'
-#         name: '{{ ansible_operator_meta.name }}-job-reader-role'
-#       rules:
-#       - verbs: ["list", "watch", "get"]
-#         apiGroups: ["batch"]
-#         resources: ["jobs"]
-
-# ## Create Rolebinding to link service account with job reader role
-
-# - name: "[DJANGO] Create RoleBinding"
-#   kubernetes.core.k8s:
-#     definition:
-#       apiVersion: rbac.authorization.k8s.io/v1
-#       kind: RoleBinding
-#       metadata:
-#         namespace: '{{ ansible_operator_meta.namespace }}'
-#         name: '{{ ansible_operator_meta.name }}-job-reader-role'
-#       subjects:
-#       - kind: ServiceAccount
-#         name: '{{ ansible_operator_meta.name }}-squest-sa'
-#       roleRef:
-#        apiGroup: rbac.authorization.k8s.io
-#        kind: Role
-#        name: '{{ ansible_operator_meta.name }}-job-reader-role'
- 
 ## Check if a previous job exists
 
 - name:  "[DJANGO] Look for old job"
@@ -178,14 +177,6 @@
       data:
         nginx.conf: "{{ lookup('ansible.builtin.template', 'nginx.conf.j2') }}"
 
-
-## Create Maintenance Deployment
-
-- name: "[MAINTENANCE] Create Deployment"
-  kubernetes.core.k8s:
-    state: present
-    template:
-      path: 'deployments/maintenance.yaml.j2'
 
 ## Create Django Deployment
 
