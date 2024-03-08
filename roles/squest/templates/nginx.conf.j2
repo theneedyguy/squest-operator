@@ -46,7 +46,7 @@ http {
     server django:8000; # fail_timeout=1s max_fails=1;
     # maintenance page
     #server maintenance:80 backup;
-    server {{ ansible_operator_meta.name }}-maintenance-svc.{{ ansible_operator_meta.namespace }}.svc:80
+    server {{ ansible_operator_meta.name }}-maintenance-svc.{{ ansible_operator_meta.namespace }}.svc:80 backup;
     }
 
     server {
