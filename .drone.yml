@@ -28,8 +28,6 @@ steps:
 trigger:
   branch:
   - main
-  event:
-  - push
 
 # ARM64 Build
 ---
@@ -61,8 +59,6 @@ steps:
 trigger:
   branch:
   - main
-  event:
-  - push
 
 
 ---
@@ -91,8 +87,6 @@ steps:
 trigger:
   branch:
   - main
-  event:
-  - push
 
 depends_on:
   - operator_amd64
