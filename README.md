@@ -33,7 +33,7 @@ When deploying the manifest to your Cluster it will deploy:
 - A RabbitMQ Server (Not clustered like the official K8s deployment)
 - A migration job to configure your Squest instance before the initial deployment and for upgrades
 - The actual Squest deployment.
-- A maintenance deployment (As of right now, when upgrading your Squest manifest it will not switch the Ingress to the maintenance deployment during upgrade. This will be added in a later version)
+- A maintenance deployment (During initial deployment and during upgrades, the ingress - should you have enabled it in the custom resource - will switch over to this deployment's service to display the maintenance page.)
 - The celery beat and celery worker deployments
 - Persistent Volume Claims, if desired
 
