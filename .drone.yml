@@ -26,8 +26,6 @@ steps:
       - latest-linux-amd64
     
 trigger:
-  branch:
-  - main
   event:
   - push
 
@@ -59,8 +57,6 @@ steps:
       - latest-linux-arm64
     
 trigger:
-  branch:
-  - main
   event:
   - push
 
@@ -89,8 +85,6 @@ steps:
       - linux/arm64
 
 trigger:
-  branch:
-  - main
   event:
   - push
 
