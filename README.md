@@ -39,7 +39,7 @@ When deploying the manifest to your Cluster it will deploy:
 
 ### Upgrade 
 
-To upgrade to a newer version of Squest, simply change the image value in the [Custom Resource](#custom-resource) under `squest.django.image` to a new version and apply the manifest. The operator will automatically create a new migration job and redeploy Squest with the new version.
+To upgrade to a newer version of Squest, simply change the image value in the [Custom Resource](#custom-resource) called `django_image` to a new version and apply the manifest. The operator will automatically create a new migration job and redeploy Squest with the new version.
 
 ### Uninstall
 
