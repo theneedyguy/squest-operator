@@ -28,6 +28,8 @@ steps:
 trigger:
   branch:
   - main
+  event:
+  - push
 
 # ARM64 Build
 ---
@@ -59,6 +61,9 @@ steps:
 trigger:
   branch:
   - main
+  event:
+  - push
+
 
 ---
 kind: pipeline
@@ -86,6 +91,8 @@ steps:
 trigger:
   branch:
   - main
+  event:
+  - push
 
 depends_on:
   - operator_amd64

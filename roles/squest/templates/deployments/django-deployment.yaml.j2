@@ -16,6 +16,8 @@ spec:
       labels:
         app: squest
     spec:
+      securityContext:
+        fsGroup: 999
       hostAliases:
       - ip: 127.0.0.1
         hostnames:
@@ -44,6 +46,13 @@ spec:
         ports:
         - containerPort: 8000
           name: django
+{% if django_persistence_enabled | bool %}
+        volumeMounts: 
+        - name: django-static
+          mountPath: /app/static
+        - name: django-media
+          mountPath: /app/media
+{% endif %}
       - name: nginx
         command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
         image: nginx:1.23.4-alpine
@@ -59,6 +68,10 @@ spec:
 {% if django_persistence_enabled | bool %}
         - name: django-static
           mountPath: /app/static
+          readOnly: true
+        - name: django-media
+          mountPath: /app/media
+          readOnly: true
 {% endif %}
       volumes:
       - name: nginx-config
@@ -71,9 +84,9 @@ spec:
       - name: django-static
         persistentVolumeClaim:
           claimName: {{ ansible_operator_meta.name }}-django-static-pvc
-{% else %}
-      - name: django-static
-        emptyDir: {}
+      - name: django-media
+        persistentVolumeClaim:
+          claimName: {{ ansible_operator_meta.name }}-django-media-pvc
 {% endif %}
 
 ---
