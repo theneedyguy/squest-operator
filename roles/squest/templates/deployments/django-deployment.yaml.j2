@@ -48,8 +48,6 @@ spec:
           name: django
 {% if django_persistence_enabled | bool %}
         volumeMounts: 
-        - name: django-static
-          mountPath: /app/static
         - name: django-media
           mountPath: /app/media
 {% endif %}
