@@ -14,6 +14,7 @@ data:
   DB_PASSWORD: "{{ db_password }}"
   WAIT_HOSTS: '{{ ansible_operator_meta.name }}-mariadb-svc.{{ ansible_operator_meta.namespace }}.svc:3306,{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672'
   BROKER_URL: 'amqp://rabbitmq:rabbitmq@{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672/squest'
+  CELERY_BROKER_URL: 'amqp://rabbitmq:rabbitmq@{{ ansible_operator_meta.name }}-rabbitmq-svc.{{ ansible_operator_meta.namespace }}.svc:5672/squest'
 
 {% if django_persistence_enabled | bool %}
 ---
