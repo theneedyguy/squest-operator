@@ -137,7 +137,7 @@
 
 - name:  "[DJANGO] Look for old squest deployment"
   set_fact:
-    existingdeployment: "{{ query('kubernetes.core.k8s', kind='Deployment', namespace=ansible_operator_meta.namespace, label_selector='component=main', api_version='apps/v1') }}"
+    existingdeployment: "{{ query('kubernetes.core.k8s', kind='Deployment', namespace=ansible_operator_meta.namespace, label_selector='component=squest', api_version='apps/v1') }}"
 
 ## Remove old deployment so volume is free to use
 

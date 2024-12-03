@@ -4,6 +4,8 @@ apiVersion: apps/v1
 metadata:
   name: '{{ ansible_operator_meta.name }}-django'
   namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    component: squest
 spec: 
   strategy:
     type: Recreate
@@ -15,7 +17,6 @@ spec:
     metadata:
       labels:
         app: squest
-        component: main
     spec:
       securityContext:
         fsGroup: 999
