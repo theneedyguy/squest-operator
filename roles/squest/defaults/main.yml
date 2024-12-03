@@ -45,6 +45,7 @@ django_persistence_enabled: true
 django_persistence_storage: 1Gi
 django_ingress_enabled: false
 django_ingress_class: traefik
+django_storage_class: default
 django_ingress_hostname: squest.company
 django_image: quay.io/hewlettpackardenterprise/squest:latest
 

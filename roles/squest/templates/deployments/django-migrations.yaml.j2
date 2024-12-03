@@ -26,10 +26,10 @@ metadata:
 spec:
   storageClassName: {{ storage_class }}
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      storage: {{ django_persistence_storage }}
+      storage: {{ django_storage_class | default(storage_class) }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -37,7 +37,7 @@ metadata:
   name: {{ ansible_operator_meta.name }}-django-media-pvc
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  storageClassName: {{ storage_class }}
+  storageClassName: {{ django_storage_class | default(storage_class) }}
   accessModes:
     - ReadWriteOnce
   resources:
@@ -50,7 +50,7 @@ metadata:
   name: {{ ansible_operator_meta.name }}-squest-backup-pvc
   namespace: {{ ansible_operator_meta.namespace }}
 spec:
-  storageClassName: {{ storage_class }}
+  storageClassName: {{ django_storage_class | default(storage_class) }}
   accessModes:
     - ReadWriteOnce
   resources:
