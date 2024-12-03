@@ -24,6 +24,7 @@ maintenance_resource_requirements:
 node_selector: ''
 redis_node_selector: ''
 rabbitmq_node_selector: ''
+rabbitmq_storage_class: default
 db_node_selector: ''
 django_node_selector: ''
 maintenance_node_selector: ''
