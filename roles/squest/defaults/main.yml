@@ -32,6 +32,7 @@ storage_class: default
 
 db_persistence_enabled: true
 db_persistence_storage: 2Gi
+db_storage_cass: default
 db_user: squest
 db_password: toor
 db_root_password: toor
